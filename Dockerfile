@@ -1,6 +1,6 @@
 FROM  adoptopenjdk/openjdk11:jdk-11.0.9.1_1-alpine
 
-LABEL Munya
+LABEL Munya tafymunya@gmail.com
 RUN apk add --no-cache curl tar bash procps
 
 # Downloading and installing Maven
