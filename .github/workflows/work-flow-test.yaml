@@ -1,0 +1,38 @@
+name: Push Images to registry
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  RegistryPush:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.tag.outputs.tag }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Determine if its a push or pull request
+      id: tag
+      run: |
+        if [ ${{ github.event_name }} == 'pull_request' ]; then
+          # Pull requests are tagged with the name of their branch.
+          echo "::set-output name=tag::${{ github.head_ref }}";
+        else
+          ref=${{ github.ref }}
+          if [ "${ref}" == 'refs/heads/master' ]; then
+            # Commits to master are tagged as latest.
+            echo "::set-output name=tag::latest"
+          else
+            # Because we only trigger push builds for master and version tags,
+            # anything that's left must be a version tag.
+            echo "::set-output name=tag::${ref#refs/tags/}"
+          fi
+        fi
+    - name: test to see if a build is successful
+      run: |
+        docker build -t "docker.pkg.github.com/$GITHUB_REPOSITORY/springtest:${{ steps.tag.outputs.tag }}" .
