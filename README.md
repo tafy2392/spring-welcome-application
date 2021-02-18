@@ -6,3 +6,4 @@ There are also CI Tests that are done on modification of Dockerfile
 ## To Do
 1. Add CI to lint and test Java application
 2. Add E2E tests
+3. Add some more useful documentation
